@@ -1,15 +1,15 @@
 import {
-  Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column({
     unique: true,
@@ -30,4 +30,8 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  public constructor(init?: Partial<User>) {
+    Object.assign(this, init);
+  }
 }

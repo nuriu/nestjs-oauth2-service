@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { User } from './user.entity';
+import { QueryFailedError, Repository } from 'typeorm';
+import { User } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
@@ -11,20 +15,33 @@ export class UserService {
     return this.repository.find();
   }
 
-  async getOne(id: number): Promise<User> {
+  async getOneByUsername(username: string): Promise<User> {
+    return await this.repository.findOne({
+      where: { username: username },
+    });
+  }
+
+  async getOneById(id: number): Promise<User> {
     const user = this.repository.findOne(id);
     if (user) {
       return user;
     }
 
-    return null;
+    throw new NotFoundException('user not found');
   }
 
   async create(user: User) {
-    const newUser = this.repository.create(user);
-    await this.repository.save(newUser);
-
-    return newUser;
+    try {
+      const newUser = this.repository.create(user);
+      return await this.repository.save(newUser);
+    } catch (error) {
+      if (
+        error instanceof QueryFailedError &&
+        error.driverError.code == 23505
+      ) {
+        throw new BadRequestException('user already exists');
+      }
+    }
   }
 
   async update(id: number, user: User) {
