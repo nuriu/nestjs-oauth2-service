@@ -19,9 +19,9 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "typeorm": "typeorm-ts-node-commonjs",
-    "typeorm:migration:generate": "npm run typeorm -- migration:generate -n",
-    "typeorm:migration:run": "npm run typeorm -- migration:run"
+    "typeorm": "node -r ts-node/register node_modules/typeorm/cli.js",
+    "typeorm:migration:generate": "npm run build && npm run typeorm migration:generate -- -n",
+    "typeorm:migration:run": "npm run build && npm run typeorm migration:run"
   },
   "dependencies": {
     "@nestjs/axios": "^0.0.7",
