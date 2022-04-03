@@ -2,10 +2,14 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
+  Request,
   UseGuards,
 } from '@nestjs/common';
-import { LoginDTO } from '../models/login.dto';
+import { AuthService } from './auth/auth.service';
+import { LoginDto } from './auth/dto/login.dto';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { LocalAuthGuard } from './auth/guards/local-auth.guard';
 import { UserDto } from './user/dto/user.dto';
 import { User } from './user/entities/user.entity';
@@ -13,11 +17,14 @@ import { UserService } from './user/user.service';
 
 @Controller()
 export class AppController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private userService: UserService,
+    private authService: AuthService,
+  ) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Body() login: LoginDTO): Promise<string> {
+  async login(@Body() login: LoginDto) {
     if (
       login.username === undefined ||
       login.password === undefined ||
@@ -27,7 +34,7 @@ export class AppController {
       throw new BadRequestException('username or password is empty');
     }
 
-    return 'logged in';
+    return this.authService.login(login.username, login.password);
   }
 
   @Post('register')
@@ -47,5 +54,11 @@ export class AppController {
         password: register.password.trim(),
       }),
     );
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return req.user;
   }
 }
