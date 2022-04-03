@@ -32,8 +32,8 @@ export class OAuth2Controller {
         redirect_uri: { type: 'string' },
         grant_type: { type: 'string' },
         response_type: { type: 'string' },
-        userEmail: { type: 'string' },
-        userPassword: { type: 'string' },
+        username: { type: 'string' },
+        password: { type: 'string' },
       },
     },
   })
