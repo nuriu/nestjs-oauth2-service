@@ -9,7 +9,7 @@ export class ClientService {
     @InjectRepository(Client) private repository: Repository<Client>,
   ) {}
 
-  async getClient(clientId: string, clientSecret?: string): Promise<Client> {
+  getClient(clientId: string, clientSecret?: string): Promise<Client> {
     if (clientSecret == null) {
       return this.repository.findOneOrFail({
         clientId,
@@ -22,7 +22,7 @@ export class ClientService {
     });
   }
 
-  async create(client: Client): Promise<Client> {
+  save(client: Client): Promise<Client> {
     return this.repository.save(client);
   }
 }

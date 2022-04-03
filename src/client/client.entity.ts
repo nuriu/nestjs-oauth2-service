@@ -6,6 +6,13 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+export enum Grant {
+  ClientCredentials = 'client_credentials',
+  AuthorizationCodes = 'authorization_code',
+  RefreshToken = 'refresh_token',
+  Password = 'password',
+}
+
 @Entity()
 export class Client {
   @PrimaryGeneratedColumn('uuid')
@@ -22,10 +29,15 @@ export class Client {
   })
   clientSecret: string;
 
-  @Column({
+  @Column('simple-array', {
     nullable: false,
   })
-  redirectUri: string;
+  redirectUris: string[];
+
+  @Column('simple-array', {
+    nullable: false,
+  })
+  grants: Grant[];
 
   @Column({ default: true })
   isActive: boolean;

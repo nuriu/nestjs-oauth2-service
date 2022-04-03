@@ -8,6 +8,6 @@ export class ClientController {
 
   @Post()
   create(@Body() client: Client) {
-    return this.clientService.create(client);
+    return this.clientService.save(client);
   }
 }

@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { UserDto } from 'src/user/user.dto';
 
-export class LoginDto {
+export class LoginDto extends UserDto {
   @ApiProperty({
     description: `The value MUST be one of;
       "code" for requesting an authorization code,
@@ -18,20 +19,13 @@ export class LoginDto {
 
   @ApiProperty({
     description: `Redirection URI that the authorization server will redirect the user-agent to.`,
-    required: false,
+    required: true,
   })
   redirect_uri: string;
 
   @ApiProperty({
-    description: 'The scope of the access request.',
-    required: false,
+    description: 'Type of grant.',
+    required: true,
   })
-  scope: string;
-
-  @ApiProperty({
-    description:
-      'An opaque value used by the client to maintain state between the request and callback.',
-    required: false,
-  })
-  state: string;
+  grant_type: string;
 }
