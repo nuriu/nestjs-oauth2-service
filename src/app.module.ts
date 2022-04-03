@@ -3,10 +3,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
+import { AccessTokenModule } from './access-token/access-token.module';
 import { AuthModule } from './auth/auth.module';
+import { AuthorizationCodeModule } from './authorization-code/authorization-code.module';
 import { ClientModule } from './client/client.module';
 import { HealthController } from './health/health.controller';
+import { OAuth2Module } from './oauth2/oauth2.module';
 import { UserModule } from './user/user.module';
 
 @Module({
@@ -38,8 +40,11 @@ import { UserModule } from './user/user.module';
     UserModule,
     AuthModule,
     ClientModule,
+    AccessTokenModule,
+    AuthorizationCodeModule,
+    OAuth2Module,
   ],
-  controllers: [HealthController, AppController],
+  controllers: [HealthController],
   providers: [],
 })
 export class AppModule {}
