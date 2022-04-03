@@ -1,14 +1,17 @@
 import {
   BadRequestException,
   Injectable,
-  NotFoundException
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueryFailedError, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
+  private saltOrRounds = 10;
+
   constructor(@InjectRepository(User) private repository: Repository<User>) {}
 
   async findAll(): Promise<User[]> {
@@ -32,6 +35,9 @@ export class UserService {
 
   async create(user: User) {
     try {
+      const hash = await bcrypt.hash(user.password, this.saltOrRounds);
+      user.password = hash;
+
       const newUser = this.repository.create(user);
       return await this.repository.save(newUser);
     } catch (error) {
