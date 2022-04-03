@@ -159,3 +159,5 @@ RESPONSE:
 }
 
 ```
+
+[Download Postman Collection File](./NestJS-OAuth2.postman_collection.json)

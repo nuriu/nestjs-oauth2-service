@@ -1,0 +1,233 @@
+{
+	"info": {
+		"_postman_id": "46ca98e4-641a-4c29-99a9-325cf46b93a0",
+		"name": "NestJS-OAuth2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "0- Health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base-url}}/health",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"health"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "1- User/Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-url}}/user/register",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2- Client/Create",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "response_type",
+						"value": "implicit",
+						"type": "text"
+					},
+					{
+						"key": "redirect_uri",
+						"value": "{{base-url}}/authorize",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"clientId\": \"client_id2\",\r\n    \"clientSecret\": \"client_secret2\",\r\n    \"redirectUris\": [\"http://localhost:3000/oauth2/token\"],\r\n    \"grants\": [\"authorization_code\"]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-url}}/client",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"client"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3- OAuth2/Authorize",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "response_type",
+						"value": "implicit",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "redirect_uri",
+						"value": "{{base-url}}/authorize",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"client_id\": \"client_id2\",\r\n  \"redirect_uri\": \"http://localhost:3000/oauth2/token\",\r\n  \"grant_type\": \"authorization_code\",\r\n  \"response_type\": \"code\",\r\n  \"username\": \"admin\",\r\n  \"password\": \"admin\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base-url}}/OAuth2/Authorize",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"OAuth2",
+						"Authorize"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4- OAuth2/Token",
+			"request": {
+				"auth": {
+					"type": "basic",
+					"basic": [
+						{
+							"key": "password",
+							"value": "client_secret2",
+							"type": "string"
+						},
+						{
+							"key": "username",
+							"value": "client_id2",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "code",
+							"value": "22315991710a0a54cc36a05211fa73ec91430cf2",
+							"type": "default"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base-url}}/oauth2/token",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5- User/Profile",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyNzJhOWIyLTM1OWUtNGZjMS1hNDU1LWFlNzFmMzZiM2UyYyIsInVzZXJuYW1lIjoiYWRtaW4iLCJwYXNzd29yZCI6IiQyYiQxMCR5OUZJR2NwcG9BekFaOTRMVWI0VkN1MkJRMjNZcmJsSTR2b0thbXFrNFVuQU5YdkpuRGd6MiIsImlzQWN0aXZlIjp0cnVlLCJjcmVhdGVkQXQiOiIyMDIyLTA0LTAzVDE2OjUyOjM1Ljc2MFoiLCJ1cGRhdGVkQXQiOiIyMDIyLTA0LTAzVDE2OjUyOjM1Ljc2MFoiLCJpYXQiOjE2NDkwMTY3MzgsImV4cCI6MTY0OTAyMDMzOH0.J5_-mznQzw6DZAs9RKQXW6XYva2cb189VK8zIgGPOi0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base-url}}/user/profile",
+					"host": [
+						"{{base-url}}"
+					],
+					"path": [
+						"user",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base-url",
+			"value": "http://localhost:3000",
+			"type": "default"
+		}
+	]
+}
