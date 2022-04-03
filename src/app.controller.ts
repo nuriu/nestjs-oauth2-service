@@ -2,63 +2,57 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Get,
+  Headers,
   Post,
-  Request,
+  Res,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth/auth.service';
-import { LoginDto } from './auth/dto/login.dto';
-import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { jwtConstants } from './auth/constants';
 import { LocalAuthGuard } from './auth/guards/local-auth.guard';
-import { UserDto } from './user/dto/user.dto';
-import { User } from './user/entities/user.entity';
-import { UserService } from './user/user.service';
+import { UserDto } from './user/user.dto';
 
 @Controller()
 export class AppController {
-  constructor(
-    private userService: UserService,
-    private authService: AuthService,
-  ) {}
+  constructor(private authService: AuthService) {}
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Body() login: LoginDto) {
+  async login(
+    @Res() res,
+    @Headers() headers: Headers,
+    @Body() userDto: UserDto,
+  ) {
     if (
-      login.username === undefined ||
-      login.password === undefined ||
-      login.username.trim().length < 1 ||
-      login.password.trim().length < 1
+      userDto.username === undefined ||
+      userDto.password === undefined ||
+      userDto.username.trim().length < 1 ||
+      userDto.password.trim().length < 1
     ) {
       throw new BadRequestException('username or password is empty');
     }
+    const response_type = headers['response_type'];
+    const redirect_uri = headers['redirect_uri'];
 
-    return this.authService.login(login.username, login.password);
-  }
+    if (response_type === 'implicit') {
+      const token = (
+        await this.authService.login(userDto.username, userDto.password)
+      ).access_token;
 
-  @Post('register')
-  async register(@Body() register: UserDto): Promise<User> {
-    if (
-      register.username === undefined ||
-      register.password === undefined ||
-      register.username.trim().length < 1 ||
-      register.password.trim().length < 1
-    ) {
-      throw new BadRequestException('username or password is empty');
+      return res.redirect(
+        `${redirect_uri}#access_token=${token}&expires_in=${jwtConstants.expiresIn}&token_type=Bearer`,
+      );
+    } else if (response_type === 'code') {
+      const client_id = headers['client_id'];
+      const authorizationCode = Buffer.from(client_id, 'base64').toString(
+        'binary',
+      );
+
+      return res.redirect(`${redirect_uri}?code=${authorizationCode}`);
+    } else {
+      throw new BadRequestException(
+        'response_type should be either "implicit" or "code"',
+      );
     }
-
-    return await this.userService.create(
-      new User({
-        username: register.username.trim(),
-        password: register.password.trim(),
-      }),
-    );
-  }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
   }
 }

@@ -2,16 +2,6 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
   @ApiProperty({
-    description: 'Username of the user.',
-  })
-  username: string;
-
-  @ApiProperty({
-    description: 'Password of the user.',
-  })
-  password: string;
-
-  @ApiProperty({
     description: `The value MUST be one of;
       "code" for requesting an authorization code,
       "token" for requesting an access token (implicit grant),
