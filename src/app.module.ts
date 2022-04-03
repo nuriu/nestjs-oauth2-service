@@ -5,6 +5,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AuthModule } from './auth/auth.module';
+import { ClientModule } from './client/client.module';
 import { HealthController } from './health/health.controller';
 import { UserModule } from './user/user.module';
 
@@ -36,6 +37,7 @@ import { UserModule } from './user/user.module';
     }),
     UserModule,
     AuthModule,
+    ClientModule,
   ],
   controllers: [HealthController, AppController],
   providers: [],
